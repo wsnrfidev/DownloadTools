@@ -1,0 +1,30 @@
+﻿  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\LoadingPage.h(21,14): warning C4309: 'initializing': truncation of constant value
+  (compiling source file 'main.cpp')
+  
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(23,21): error C2039: 'filesystem': is not a member of 'std'
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\chrono(48,1):
+  see declaration of 'std'
+  
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(23,21): error C2878: 'filesystem': a namespace or class of this name does not exist
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(66,12): error C2653: 'fs': is not a class or namespace name
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(66,16): error C3861: 'is_directory': identifier not found
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(70,12): error C2653: 'fs': is not a class or namespace name
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(70,16): error C3861: 'exists': identifier not found
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(310,10): error C2039: 'vector': is not a member of 'std'
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\chrono(48,1):
+  see declaration of 'std'
+  
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(310,10): error C2065: 'vector': undeclared identifier
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(310,22): error C2275: 'std::string': expected an expression instead of a type
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(310,30): error C2065: 'files': undeclared identifier
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,30): error C2653: 'fs': is not a class or namespace name
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,5): error C2530: 'entry': references must be initialized
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,5): error C3531: 'entry': a symbol whose type contains 'auto' must have an initializer
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,28): error C2143: syntax error: missing ';' before ':'
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,34): error C3861: 'directory_iterator': identifier not found
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(311,72): error C2143: syntax error: missing ';' before ')'
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(313,9): error C2065: 'files': undeclared identifier
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(324,33): error C2065: 'files': undeclared identifier
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(325,37): error C2065: 'files': undeclared identifier
