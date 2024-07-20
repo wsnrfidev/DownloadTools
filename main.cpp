@@ -4,21 +4,26 @@
 #include <iomanip>
 #include <cstdlib>
 
-#include <string> // library untuk mensupport penggunaan string dan berkontribusi atas fitur pengganti nama file...
+#include <string> // library untuk mensupport penggunaan string dan berkontribusi atas fitur pengganti nama file
 
 #include <chrono> // library buat waktu real time
 
-#include <filesystem> // library yang berguna banget buat manage dan lain lain dah pokoknya, pake library ini pastikan atur bahsa c++ ke 17/20...
+#include <filesystem> // library yang berguna banget buat manage dan lain lain dah pokoknya, pake library ini pastikan atur bahsa c++ ke 17/20
 
-#include <curl/curl.h> // install melalui vcpkg >> baca dokumentasi...
+#include <curl/curl.h> // install melalui vcpkg >> baca dokumentasi
 
-#include <Windows.h> // kedua library berfungsi untuk membaca folder download default user...
+#include <Windows.h> // kedua library berfungsi untuk membaca folder download default user
 #include <Shlobj.h> 
 
-#define _CRT_SECURE_NO_WARNINGS // ini tuh biar warning gak muncul, gak tau kenapa pake local time malah warning....
+#define _CRT_SECURE_NO_WARNINGS // bypass warning attention
 #include <ctime> // local time
 
-#include "LoadingPage.h" // file header bikinan sendiri buat loading page...
+#include <Shlwapi.h> // untuk menggunakan tipe data LPWSTR
+#include <Windows.h>
+#pragma comment(lib, "Shell32.lib") // untuk menggunakan fungsi ShellExecute
+#pragma comment(lib, "Shlwapi.lib")
+
+#include "LoadingPage.h" // file header buatan sendiri buat loading page
 
 namespace fs = std::filesystem;
 
@@ -26,7 +31,7 @@ struct DownloadProgress { // progress download
     double last_progress;
 };
 
-std::string get_download_directory() { // fungsi untuk membaca folder download default user lalu menaruh hasil donwload di sana...
+std::string get_download_directory() { // fungsi untuk membaca folder download default user lalu menaruh hasil donwload di sana
     PWSTR path;
     if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Downloads, 0, NULL, &path))) {
         std::wstring wpath(path);
@@ -34,21 +39,21 @@ std::string get_download_directory() { // fungsi untuk membaca folder download d
         return std::string(wpath.begin(), wpath.end()) + "\\";
     }
     else {
-        // Fallback jika gagal mendapatkan direktori default
+        // fallback jika gagal mendapatkan direktori default
         return "\t\t\t C:\\Users\\Administrator\\Downloads\\";
     }
 }
 
-void log_download_history(const std::string& filename) { // ini fuction buat bikin log download, nah nanti bisa diliat di history...
+void log_download_history(const std::string& filename) { // function untuk membuat log download
     // dapatkan waktu saat ini
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-    // Ubah waktu saat ini menjadi waktu lokal
+    // ubah waktu saat ini menjadi waktu lokal
     struct std::tm timeinfo;
     localtime_s(&timeinfo, &now);
 
     // format waktu ke dalam string
-    char time_buffer[80]; // Buffer untuk menyimpan waktu dalam string
+    char time_buffer[80]; // buffer untuk menyimpan waktu dalam string
     strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", &timeinfo);
 
     // simpan waktu dan nama file ke dalam riwayat unduhan
@@ -62,11 +67,11 @@ void log_download_history(const std::string& filename) { // ini fuction buat bik
     }
 }
 
-bool is_download_directory_available(const std::string& directory) { // nah ini buat memastikan kalo tempat penyimpanan file tersedia...
+bool is_download_directory_available(const std::string& directory) { // untuk memastikan kalo tempat penyimpanan file tersedia
     return fs::is_directory(directory);
 }
 
-bool file_exists(const std::string& filepath) { // ini untuk memastikan file ada dan nanti akan membantu untuk mengganti nama file yang sama...
+bool file_exists(const std::string& filepath) { // ini untuk memastikan file ada dan nanti akan membantu untuk mengganti nama file yang sama
     return fs::exists(filepath);
 }
 
@@ -93,9 +98,9 @@ bool rename_file(const std::string& old_filepath, const std::string& new_filepat
     }
 }
 
-std::string get_unique_filename(const std::string& filepath) { // nama file bakalan ke ganti biar gak double...
-    std::string unique_filepath = filepath;                    // kalo udah ada vscode_installer.exe terus download lagi nanti bakal             
-    int count = 1;                                             // jadi vscode_installer_1.exe begitu dan seterusnya....
+std::string get_unique_filename(const std::string& filepath) { // nama file akan terganti supaya tidak double,
+    std::string unique_filepath = filepath;                    // contoh jika sudah ada vscode_installer.exe lalu user download lagi nanti akan            
+    int count = 1;                                             // menjadi vscode_installer_1.exe begitu dan seterusnya
     while (file_exists(unique_filepath)) {
         size_t pos = unique_filepath.rfind(".");
         if (pos != std::string::npos) {
@@ -108,13 +113,13 @@ std::string get_unique_filename(const std::string& filepath) { // nama file baka
     return unique_filepath;
 }
 
-size_t write_data(void* ptr, size_t size, size_t nmemb, std::ofstream& stream) { // owh ini buat memastikan ukuran file bro biar gak bug
-    stream.write(static_cast<const char*>(ptr), size * nmemb);                   // pas bar presentasenya....
+size_t write_data(void* ptr, size_t size, size_t nmemb, std::ofstream& stream) { // ini untuk memastikan ukuran file supaya tidak terjadi bug
+    stream.write(static_cast<const char*>(ptr), size * nmemb);                   // saat bar presentasenya
     return size * nmemb;
 }
 
 int progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-    DownloadProgress* progress = static_cast<DownloadProgress*>(clientp);     // waktu saat download....
+    DownloadProgress* progress = static_cast<DownloadProgress*>(clientp);     // waktu saat download
     double current_progress = (dlnow > 0) ? (dlnow * 100.0 / dltotal) : 0.0;
     double speed = 0.0;
     static auto start_time = std::chrono::steady_clock::now();
@@ -125,7 +130,7 @@ int progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_
         speed = static_cast<double>(dlnow) / static_cast<double>(elapsed_seconds) / 1024.0;
     }
 
-    if (current_progress - progress->last_progress >= 1.0) { // bar presentase download....
+    if (current_progress - progress->last_progress >= 1.0) { // bar presentase download
         auto seconds_left = static_cast<int>((100 - current_progress) / (current_progress / elapsed_seconds));
         system("cls");
         std::cout << "\r\033[32mDownloading... ["
@@ -140,7 +145,7 @@ int progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_
     return 0;
 }
 
-bool download_file(const std::string& url, const std::string& output_filename) { // ini kalo direktori gak ada...
+static bool download_file(const std::string& url, const std::string& output_filename) { // ini jika direktori tidak tersedia
     std::string download_directory = get_download_directory();
     if (!is_download_directory_available(download_directory)) {
         std::cerr << "Direktori tidak tersedia..." << std::endl;
@@ -150,13 +155,13 @@ bool download_file(const std::string& url, const std::string& output_filename) {
     std::string output_path = download_directory + output_filename;
     output_path = get_unique_filename(output_path);
 
-    std::ofstream outputFile(output_path, std::ios::binary); // yahhh pesan error biasa ini mah....
+    std::ofstream outputFile(output_path, std::ios::binary); // error ketika gagal membuat direktori
     if (!outputFile) {
         std::cerr << "Gagal membuat file di direktori..." << std::endl;
         return false;
     }
 
-    CURL* curl_handle = curl_easy_init(); // ini pesan error kalo libcurl kenapa - kenapa, soalnya agak agak awalnya nih library....
+    CURL* curl_handle = curl_easy_init(); // ini pesan error kalo libcurl kenapa - kenapa, soalnya agak agak awalnya nih library
     if (!curl_handle) {
         std::cerr << "Gagal menginisialisasi libcurl..." << std::endl;
         outputFile.close();
@@ -173,7 +178,7 @@ bool download_file(const std::string& url, const std::string& output_filename) {
     progress.last_progress = 0.0;
     curl_easy_setopt(curl_handle, CURLOPT_XFERINFODATA, &progress);
 
-    CURLcode res = curl_easy_perform(curl_handle); // yahhh ngerti kan ini pesan error buat apa...
+    CURLcode res = curl_easy_perform(curl_handle); // errror ketika gagal melakukan unduhan
     if (res != CURLE_OK) {
         std::cerr << "Gagal melakukan unduhan: " << curl_easy_strerror(res) << std::endl;
         outputFile.close();
@@ -188,6 +193,103 @@ bool download_file(const std::string& url, const std::string& output_filename) {
     system("cls");
 
     return true;
+}
+
+void BarInstall(int progress, int elapsed_seconds) { // fungsi untuk menampilkan progress bar install
+    system("cls");
+
+    
+    std::cout << "\033[34m."; // escape code untuk warna biru
+    std::cout << "\r\t\t\tInstalling... [";
+    int pos = progress / 2;
+    for (int i = 0; i < 50; ++i) {
+        if (i < pos) std::cout << "#";
+        else if (i == pos) std::cout << "#";
+        else std::cout << " ";
+    }
+    std::cout << "] " << progress << "% ";
+    std::cout << "Time: " << elapsed_seconds << "s   ";
+    std::cout.flush();
+
+    // mengatur warna teks kembali ke normal
+    std::cout << "\033[0m"; // escape code untuk reset warna
+}
+
+void installAutomatically(const std::string& filePath) { // fungsi untuk fitur menginstal file secara otomatis
+    std::cout << "Menginstal otomatis file: " << filePath << std::endl;
+
+    // konversi std::string ke LPWSTR
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), static_cast<int>(filePath.size()), NULL, 0);
+    std::wstring widePath(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, filePath.c_str(), static_cast<int>(filePath.size()), &widePath[0], size_needed);
+
+    // tentukan command line parameters berdasarkan jenis file
+    std::wstring commandLineParams;
+    if (filePath.substr(filePath.size() - 4) == ".exe") {
+        // tambahkan parameter untuk silent install pada file .exe
+        commandLineParams = L" /SILENT /VERYSILENT /s /quiet /norestart";
+    }
+    else if (filePath.substr(filePath.size() - 4) == ".msi") {
+        // tambahkan parameter untuk silent install pada file .msi (jika ada)
+        commandLineParams = L" /quiet /qn /norestart";
+    }
+
+    // proses untuk menjalankan installer dengan parameter
+    SHELLEXECUTEINFO shExecInfo = { 0 };
+    shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    shExecInfo.hwnd = NULL;
+    shExecInfo.lpVerb = L"open";
+    shExecInfo.lpFile = widePath.c_str();
+    shExecInfo.lpParameters = commandLineParams.c_str();
+    shExecInfo.lpDirectory = NULL;
+    shExecInfo.nShow = SW_SHOWNORMAL;
+    shExecInfo.hInstApp = NULL;
+
+    if (ShellExecuteEx(&shExecInfo) == FALSE || shExecInfo.hProcess == NULL) {
+        std::cout << "Gagal menjalankan installer." << std::endl;
+        return;
+    }
+
+    // tampilkan progress instalasi
+    auto start_time = std::chrono::steady_clock::now();
+    std::thread progressThread([&]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // delay untuk update progress setiap 0.5 detik
+
+            // dapatkan informasi progress instalasi (misalnya, jika file .exe sudah selesai dieksekusi)
+            DWORD exitCode;
+            if (GetExitCodeProcess(shExecInfo.hProcess, &exitCode) && exitCode != STILL_ACTIVE) {
+                break;
+            }
+
+            // hitung waktu yang sudah berlalu (informasi time left)
+            auto current_time = std::chrono::steady_clock::now();
+            auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
+
+            // perkiraan progress (di sini kita mengasumsikan total waktu instalasi maksimum adalah 60 detik) > masih mencari methode yang perfek
+            int progress = static_cast<int>((elapsed_seconds * 100) / 60);
+            if (progress > 100) progress = 100; // batasi progress hingga 100%
+            BarInstall(progress, elapsed_seconds);
+        }
+        });
+
+    // tunggu proses instalasi selesai
+    WaitForSingleObject(shExecInfo.hProcess, INFINITE);
+    DWORD exitCode;
+    GetExitCodeProcess(shExecInfo.hProcess, &exitCode);
+
+    // hentikan thread progress
+    progressThread.join();
+
+    if (exitCode == 0) {
+        std::cout << std::endl << "Instalasi selesai." << std::endl;
+    }
+    else {
+        std::cout << std::endl << "Gagal melakukan instalasi, kode kesalahan: " << exitCode << std::endl;
+    }
+
+    CloseHandle(shExecInfo.hProcess);
 }
 
 void display_browser_menu() {
@@ -258,7 +360,7 @@ void display_media_player_menu() {
     std::cout << "\n\t\t\t             Masukkan nomor pilihan Anda:  ";
 }
 
-void display_developer_information() { // informasi developer biar keren aja wkwk....
+void display_developer_information() { // informasi developer biar keren aja wkwk
     std::string developer_name = "Wisnu Rafi";
     std::string github_url = "github.com/wsnrfidev";
     std::string instagram_handle = "wisnurafi_";
@@ -288,7 +390,7 @@ void display_download_information(const std::string& filename, bool success) {
         std::cout << "\r\t\t\t           Gagal melakukan unduhan..." << std::endl;
 }
 
-void open_downloaded_file(const std::string& filepath) { // fitur untuk membuka file yang sudah didownload.....
+void open_downloaded_file(const std::string& filepath) { // fitur untuk membuka file yang sudah didownload 
     system(("start " + filepath).c_str());
 }
 
@@ -359,7 +461,7 @@ void manage_downloads() {
     }
 }
 
-void display_download_history() { // fitur untuk user melihat history download yang sudah disimpan di log...
+void display_download_history() { // fitur untuk user melihat history download yang sudah disimpan di log
     system("cls");
     std::cout << "\t\t\t           ==================================  " << std::endl;
     std::cout << "\t\t\t                   HISTORY DOWNLOAD                 " << std::endl;
@@ -387,7 +489,7 @@ int main() {
 
     SetConsoleTitle(TEXT("Download Tools V2 | WSNRFIDEV"));
 
-    F_Loading(); // loading page....
+    F_Loading(); // loading page
 
     int choice;
     do {
@@ -410,7 +512,7 @@ int main() {
         std::cout << "\n\t\t\t             Masukkan nomor pilihan Anda:  ";
         std::cin >> choice;
 
-        // ini kogika buat eksekusi pilihan menu utama....
+        // logika untuk eksekusi menu utama
         switch (choice) {
         case 1:
             display_browser_menu();
@@ -428,13 +530,13 @@ int main() {
             display_media_player_menu();
             break;
         case 6:
-            manage_downloads(); // display menu manajemen download...
+            manage_downloads(); // display menu manajemen download
             std::cout << "\n\t\t\t        Tekan Enter untuk kembali ke menu utama...";
             std::cin.ignore();
             std::cin.get();
             continue;
         case 7:
-            display_download_history(); // menampilkan riwayat unduhan...
+            display_download_history(); // menampilkan riwayat unduhan
             continue;
         case 0:
             system("cls");
@@ -452,7 +554,7 @@ int main() {
         }
 
 
-        // ini logika buat eksekusi pililhan sub menu...
+        // ini logika untuk eksekusi pililhan sub menu > still undermaintenance
         int submenu_choice;
         std::cin >> submenu_choice;
 
@@ -543,7 +645,7 @@ int main() {
 
         system("cls");
 
-        // menampilkan informasi developer dan informasi download....
+        // menampilkan informasi developer dan informasi download
 
         std::string download_directory = get_download_directory();
         std::string filepath = download_directory + filename;
@@ -562,17 +664,22 @@ int main() {
 
             if (response == "y") {
                 // install file yang sudah diunduh jika user memilih ya
+                installAutomatically(filepath);                      
+            } 
+            if (response == "t")
+            {
+                // hanya membuka file yang sudah diunduh > install manual oleh user
                 open_downloaded_file(filepath);
             }
 
             system("cls");
 
-            // menampilkan informasi developer dan informasi unduhan...
+            // menampilkan informasi developer dan informasi unduhan
             display_developer_information();
             display_download_information(filename, success);
         }
 
-        break; // close setelah mendownload software.....
+        break; // close setelah mendownload software
 
     } while (choice != 0);
 

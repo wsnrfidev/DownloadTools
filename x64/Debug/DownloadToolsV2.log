@@ -2,11 +2,16 @@
 C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\LoadingPage.h(21,14): warning C4309: 'initializing': truncation of constant value
   (compiling source file 'main.cpp')
   
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(273,34): warning C4244: 'argument': conversion from '_Rep' to 'int', possible loss of data
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(273,34): warning C4244:         with
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(273,34): warning C4244:         [
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(273,34): warning C4244:             _Rep=__int64
+C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(273,34): warning C4244:         ]
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(4537,18): warning C4244: '=': conversion from 'wchar_t' to 'char', possible loss of data
   (compiling source file 'main.cpp')
   C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(4537,18):
   the template instantiation context (the oldest one first) is
-  	C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(34,27):
+  	C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(39,27):
   	see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
           with
           [
@@ -14,7 +19,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-  		C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(34,9):
+  		C:\Users\Administrator\source\repos\MY PROJECT\MY SOFTWARE\DownloadToolsV2\DownloadToolsV2\main.cpp(39,9):
   		see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'get_download_directory'
   	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xstring(2600,17):
   	see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
